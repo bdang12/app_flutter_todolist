@@ -103,7 +103,7 @@ class _HomeState extends State<Home> {
                   child: ElevatedButton(
                   child: Text('+', style: TextStyle(fontSize: 40,),),
                   onPressed: () {
-                    _addToDoItem(_todoController.text);
+                    _addToDoItem(_todoController.text); //woring on add button 
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Green,
@@ -132,16 +132,66 @@ class _HomeState extends State<Home> {
    
   }
 
-  void _addToDoItem(String toDo) {
+  void _addToDoItem(String toDo) async{
+    if(toDo.trim().isEmpty)   //This make the add button not up the text if the text is blank
+    {
+      _showSnackbar(context, "Error, cannot add a blank todo item");
+      return;
+    }
+    DateTime? deadline = await _selectDeadlineDate(context);
     setState(() {
        todosList.add(ToDo(
     id: DateTime.now().millisecondsSinceEpoch.toString(),
-    todoText: toDo
+    todoText: toDo,
+    createdDate: DateTime.now(),
+    deadlineDate: deadline,
     ));
 
     });
     _todoController.clear();
    
+  }
+
+  Future<DateTime?> _selectDeadlineDate(BuildContext context) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+    if(selectedDate != null) {
+      TimeOfDay? selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if(selectedTime != null) {
+        return DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedDate.hour,
+          selectedDate.minute,
+        );
+      }
+    }
+    return null;
+  }
+
+  //add a SnackBar Method to give notify when user input blank text
+  void _showSnackbar(BuildContext context, String message)
+  {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 6),
+        action: SnackBarAction(
+          label: 'Dismiss',
+          onPressed: () {
+            //Dismiss SnackBar
+          },
+        )
+        )
+      );
   }
 
   void _runFilter(String enteredKeyword) {

@@ -2,11 +2,15 @@
   String? id;
   String? todoText;
   bool isDone;
+  DateTime createdDate;
+  DateTime? deadlineDate;
 
   ToDo({
     required this.id,
     required this.todoText,
     this.isDone = false,
+    required this.createdDate,
+    this.deadlineDate,
   });
 
   static List<ToDo> todoList() {

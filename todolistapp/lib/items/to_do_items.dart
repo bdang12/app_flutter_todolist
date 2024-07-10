@@ -5,7 +5,7 @@ import 'package:namer_app/model/todo.dart';
 class ToDoItems extends StatelessWidget
 {
   final ToDo todo;
-  final onToDoChanged;
+  final Function(ToDo) onToDoChanged;
   final onDeleteItem;
 
   const ToDoItems ({Key? key, required this.todo, required this.onToDoChanged, required this.onDeleteItem}) : super(key: key);
