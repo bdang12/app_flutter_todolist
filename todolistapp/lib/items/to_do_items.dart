@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:namer_app/constant/color.dart';
 import 'package:namer_app/model/todo.dart';
 
@@ -34,6 +35,21 @@ class ToDoItems extends StatelessWidget
          color: Black,
          decoration: todo.isDone? TextDecoration.lineThrough : null,
          ),
+         ),
+         subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Begin: ${DateFormat('yyyy-MM-dd HH:mm').format(todo.createdDate)}',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              if (todo.deadlineDate != null) 
+                Text(
+                  'Deadline: ${DateFormat('yyyy-MM-dd HH:mm').format(todo.deadlineDate!)}',
+                  style: TextStyle(fontSize: 12, color: Colors.red),
+                ),
+              
+          ],
          ),
          trailing: Container(
           padding: EdgeInsets.all(0),

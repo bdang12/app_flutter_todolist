@@ -23,9 +23,13 @@ class _HomeState extends State<Home> {
     super.initState();
   }
   @override
-  Widget build(BuildContext context)
-  {
-    return Scaffold(
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+    
+    child: Scaffold(
       backgroundColor: Yellow,
       appBar: _buildAppBar(),
       body: Stack(
@@ -116,6 +120,7 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
+    ),
     );
   }
 
@@ -139,6 +144,10 @@ class _HomeState extends State<Home> {
       return;
     }
     DateTime? deadline = await _selectDeadlineDate(context);
+    if (deadline == null) {
+      _showSnackbar(context, "Cancelled: To-Do item not added");
+    return;
+    }
     setState(() {
        todosList.add(ToDo(
     id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -149,10 +158,13 @@ class _HomeState extends State<Home> {
 
     });
     _todoController.clear();
+    //FocusScope.of(context).unfocus(); //This will hide the keyboard when finish adding
    
   }
 
   Future<DateTime?> _selectDeadlineDate(BuildContext context) async {
+
+    //FocusScope.of(context).unfocus(); // Hide the keyboard
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -169,8 +181,8 @@ class _HomeState extends State<Home> {
           selectedDate.year,
           selectedDate.month,
           selectedDate.day,
-          selectedDate.hour,
-          selectedDate.minute,
+          selectedTime.hour,
+          selectedTime.minute,
         );
       }
     }
