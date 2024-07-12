@@ -16,12 +16,21 @@ class _HomeState extends State<Home> {
   final todosList = ToDo.todoList();
   List<ToDo> _foundToDo = [];
   final _todoController = TextEditingController();
+  final _todoFocusNode = FocusNode(); 
+  bool _isSnackbarActive = false;
 
   @override
   void initState() {
     _foundToDo = todosList;
     super.initState();
   }
+@override
+  void dispose() {
+    _todoController.dispose();
+    _todoFocusNode.dispose(); // Dispose the focus node
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -58,7 +67,11 @@ class _HomeState extends State<Home> {
                     ToDoItems(
                       todo: todo,
                       onToDoChanged: _handleToDoChange,
-                      onDeleteItem: _deleteToDoItem,
+                      onDeleteItem: (id) {
+                        if (id != null) {
+                          _confirmDelete(context, id);  //change this one when add confirm delete below
+                        }
+                      },
                       ),
                   ],
                 )
@@ -92,6 +105,7 @@ class _HomeState extends State<Home> {
                ),
                child: TextField(
                 controller: _todoController,
+                focusNode: _todoFocusNode, // Set the focus node
                 decoration: InputDecoration(
                   hintText: 'Add a new todo item',
                   border: InputBorder.none,
@@ -130,12 +144,41 @@ class _HomeState extends State<Home> {
     });
    
   }
+  void _confirmDelete(BuildContext context, String id)
+  {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure you want to delete this to do items?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); //Dismiss dialog
+              },
+            ),
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                _deleteToDoItem(id);
+                Navigator.of(context).pop(); //Dismiss dialog
+              },
+            ),
+          ],
+        );
+      },
+
+    );
+  }
+
   void _deleteToDoItem(String id) {
     setState(() {
        todosList.removeWhere((item) => item.id == id);
     });
    
   }
+  
 
   void _addToDoItem(String toDo) async{
     if(toDo.trim().isEmpty)   //This make the add button not up the text if the text is blank
@@ -158,6 +201,7 @@ class _HomeState extends State<Home> {
 
     });
     _todoController.clear();
+    _todoFocusNode.unfocus();
     //FocusScope.of(context).unfocus(); //This will hide the keyboard when finish adding
    
   }
@@ -192,6 +236,11 @@ class _HomeState extends State<Home> {
   //add a SnackBar Method to give notify when user input blank text
   void _showSnackbar(BuildContext context, String message)
   {
+    if(_isSnackbarActive) return;
+
+    setState(() {
+      _isSnackbarActive = true;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -203,7 +252,11 @@ class _HomeState extends State<Home> {
           },
         )
         )
-      );
+      ).closed.then((reason) {
+    setState(() {
+      _isSnackbarActive = false;
+    });
+  });
   }
 
   void _runFilter(String enteredKeyword) {

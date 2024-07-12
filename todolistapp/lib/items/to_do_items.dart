@@ -7,7 +7,7 @@ class ToDoItems extends StatelessWidget
 {
   final ToDo todo;
   final Function(ToDo) onToDoChanged;
-  final onDeleteItem;
+  final Function(String) onDeleteItem;
 
   const ToDoItems ({Key? key, required this.todo, required this.onToDoChanged, required this.onDeleteItem}) : super(key: key);
 
@@ -65,8 +65,9 @@ class ToDoItems extends StatelessWidget
             iconSize: 10,
             icon: Icon(Icons.delete),
             onPressed: () {
-             // print('Clicked on the delete icon');
-             onDeleteItem(todo.id);
+              if (todo.id != null) {
+                onDeleteItem(todo.id!);
+              }
             },
           )
          ),
