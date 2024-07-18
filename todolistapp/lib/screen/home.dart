@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/constant/color.dart';
 import 'package:namer_app/items/to_do_items.dart';
 import 'package:namer_app/model/todo.dart';
+import 'package:namer_app/favorites/FavoritesPage.dart';
 
 // Dart file for home screen
 
@@ -41,6 +42,7 @@ class _HomeState extends State<Home> {
     child: Scaffold(
       backgroundColor: Yellow,
       appBar: _buildAppBar(),
+      drawer: _buildDrawer(),
       body: Stack(
         children: [
           Container(
@@ -72,6 +74,7 @@ class _HomeState extends State<Home> {
                           _confirmDelete(context, id);  //change this one when add confirm delete below
                         }
                       },
+                      onFavoriteChanged: _handleFavoriteChange, //add this new favorite change line
                       ),
                   ],
                 )
@@ -144,6 +147,12 @@ class _HomeState extends State<Home> {
     });
    
   }
+
+  void _handleFavoriteChange(ToDo todo) {
+    setState(() {
+      todo.isFavorite = !todo.isFavorite;
+    });
+  }
   void _confirmDelete(BuildContext context, String id)
   {
     showDialog(
@@ -181,7 +190,8 @@ class _HomeState extends State<Home> {
   
 
   void _addToDoItem(String toDo) async{
-    if(toDo.trim().isEmpty)   //This make the add button not up the text if the text is blank
+    String trimmedToDo = toDo.trim();
+    if(trimmedToDo.isEmpty)   //This make the add button not up the text if the text is blank
     {
       _showSnackbar(context, "Error, cannot add a blank todo item");
       return;
@@ -191,10 +201,17 @@ class _HomeState extends State<Home> {
       _showSnackbar(context, "Cancelled: To-Do item not added");
     return;
     }
+    //check for date and time of begin and deadline date
+    DateTime beginTime = DateTime.now();
+    if(deadline.isBefore(beginTime)) {
+      _showSnackbar(context, "Error, deadline must be later than current date and time");
+      return;
+    }
+
     setState(() {
        todosList.add(ToDo(
     id: DateTime.now().millisecondsSinceEpoch.toString(),
-    todoText: toDo,
+    todoText: trimmedToDo,
     createdDate: DateTime.now(),
     deadlineDate: deadline,
     ));
@@ -313,11 +330,16 @@ class _HomeState extends State<Home> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-        Icon(
-          Icons.menu,
-          color: Black, 
-        size: 30,
+          Builder(
+        builder: (context) => IconButton(
+        icon: Icon( null
+          //Icons.favorite,
+          //color: Red, 
+        //size: 30,
         ),
+        onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
+          ),
         Container(
           height: 40,
           width: 40,
@@ -325,8 +347,87 @@ class _HomeState extends State<Home> {
             borderRadius: BorderRadius.circular(20),
             child: Image.asset('assets/images/123.jpg'), 
           ),
+        ),
+      ],
+      )
+    );
+  }
+  Drawer _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget> [
+          DrawerHeader(
+            decoration: BoxDecoration(
+            color: Blue,
+          ),
+          child: Text(
+            'Menu',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+            ),
+          ),
+      ),
+      ListTile(
+        leading: Icon(Icons.info),
+        title: Text('About'),
+        onTap: () {
+          Navigator.pop(context);
+          _showAboutDialog(context);
+        },
+      ),
+        ListTile(
+        leading: Icon(Icons.login),
+        title: Text('Log in'),
+        onTap: () {
+          Navigator.pop(context);
+          _navigateToLogin(context);
+        },
+        ),
+        ListTile(
+          leading: Icon(Icons.star),
+          title: Text('Favorites'),
+          onTap: () {
+            Navigator.pop(context);
+            _navigateToFavorite(context);
+          }
         )
-      ],)
+        ],
+      ),
+    );
+  }
+  void _showAboutDialog(BuildContext context)
+  {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('About'),
+          content: Text('This is To-Do list application. That make by Bill Binh',
+           ),
+          actions: [
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void _navigateToLogin(BuildContext context)
+  {
+    //Implement this later
+  }
+  void _navigateToFavorite(BuildContext context){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FavoritesPage(todoList: todosList),
+        ),
     );
   }
 }

@@ -4,6 +4,7 @@
   bool isDone;
   DateTime createdDate;
   DateTime? deadlineDate;
+  bool isFavorite; //add a new bool for favorite
 
   ToDo({
     required this.id,
@@ -11,6 +12,7 @@
     this.isDone = false,
     required this.createdDate,
     this.deadlineDate,
+    this.isFavorite = false,
   });
 
   static List<ToDo> todoList() {
