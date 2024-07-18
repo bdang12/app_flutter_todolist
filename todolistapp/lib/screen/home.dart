@@ -3,6 +3,7 @@ import 'package:namer_app/constant/color.dart';
 import 'package:namer_app/items/to_do_items.dart';
 import 'package:namer_app/model/todo.dart';
 import 'package:namer_app/favorites/FavoritesPage.dart';
+import 'dart:async';
 
 // Dart file for home screen
 
@@ -23,6 +24,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _foundToDo = todosList;
+    Timer.periodic(Duration(minutes: 1), (timer) {
+      _checkDeadlines();
+    });
     super.initState();
   }
 @override
@@ -30,6 +34,16 @@ class _HomeState extends State<Home> {
     _todoController.dispose();
     _todoFocusNode.dispose(); // Dispose the focus node
     super.dispose();
+  }
+
+  void _checkDeadlines() {
+    setState(() {
+      for(ToDo todo in todosList) {
+        if(todo.deadlineDate != null && todo.deadlineDate!.isBefore(DateTime.now())) {
+          todo.isDone = true;
+        }
+      }
+    });
   }
 
   @override
