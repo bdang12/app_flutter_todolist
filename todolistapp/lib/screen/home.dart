@@ -6,7 +6,7 @@ import 'package:namer_app/favorites/FavoritesPage.dart';
 import 'dart:async';
 
 // Dart file for home screen
-
+// This is structure for Home class with a stateful widget to put action touch to home page.
 class Home extends StatefulWidget{
   Home({Key? key}) : super(key: key);
 
@@ -14,12 +14,12 @@ class Home extends StatefulWidget{
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
-  final todosList = ToDo.todoList();
-  List<ToDo> _foundToDo = [];
+class _HomeState extends State<Home> { //This is the home state class that keep all the app bar + drawer + every thing that in the home page
+  final todosList = ToDo.todoList(); 
+  List<ToDo> _foundToDo = []; //list for todo
   final _todoController = TextEditingController();
   final _todoFocusNode = FocusNode(); 
-  bool _isSnackbarActive = false;
+  bool _isSnackbarActive = false;//set state for snack bar not turn on currently
 
   @override
   void initState() {
@@ -39,13 +39,12 @@ class _HomeState extends State<Home> {
   void _checkDeadlines() {
     setState(() {
       for(ToDo todo in todosList) {
-        if(todo.deadlineDate != null && todo.deadlineDate!.isBefore(DateTime.now())) {
-          todo.isDone = true;
+        if(todo.deadlineDate != null && todo.deadlineDate!.isBefore(DateTime.now())) {todo.isDone = true;
         }
       }
     });
   }
-
+  // This structure is build for the app bar
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -55,8 +54,8 @@ class _HomeState extends State<Home> {
     
     child: Scaffold(
       backgroundColor: Yellow,
-      appBar: _buildAppBar(),
-      drawer: _buildDrawer(),
+      appBar: _buildAppBar(), //make the app bar + get the place build the app bar below
+      drawer: _buildDrawer(), // make the drawer + get the place build the drawer below
       body: Stack(
         children: [
           Container(
@@ -66,7 +65,7 @@ class _HomeState extends State<Home> {
              ),
             child: Column(
               children: [
-                searchBox(), 
+                searchBox(), //this one create a search box
                 Expanded(
                   child: ListView(
                   children: [
@@ -222,7 +221,7 @@ class _HomeState extends State<Home> {
       return;
     }
 
-    setState(() {
+    setState(() { //this set a state for time
        todosList.add(ToDo(
     id: DateTime.now().millisecondsSinceEpoch.toString(),
     todoText: trimmedToDo,
@@ -237,21 +236,21 @@ class _HomeState extends State<Home> {
    
   }
 
-  Future<DateTime?> _selectDeadlineDate(BuildContext context) async {
+  Future<DateTime?> _selectDeadlineDate(BuildContext context) async { //This create a structure for create day and time
 
     //FocusScope.of(context).unfocus(); // Hide the keyboard
-    DateTime? selectedDate = await showDatePicker(
+    DateTime? selectedDate = await showDatePicker( // this create a day picker to select day
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
+      initialDate: DateTime.now(), //ngay khoi tao
+      firstDate: DateTime.now(), //ngay bat day
+      lastDate: DateTime(2100), //ngay ket thuc
     );
-    if(selectedDate != null) {
-      TimeOfDay? selectedTime = await showTimePicker(
+    if(selectedDate != null) { //set condition if date is not null it will change to select time part
+      TimeOfDay? selectedTime = await showTimePicker( //this create a time picker to select time 
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.now(), //gio khoi tao
       );
-      if(selectedTime != null) {
+      if(selectedTime != null) { //set condition if set a time is not null, return year month day hour and minute
         return DateTime(
           selectedDate.year,
           selectedDate.month,
@@ -261,23 +260,23 @@ class _HomeState extends State<Home> {
         );
       }
     }
-    return null;
+    return null; //else it will return null
   }
 
   //add a SnackBar Method to give notify when user input blank text
   void _showSnackbar(BuildContext context, String message)
   {
-    if(_isSnackbarActive) return;
+    if(_isSnackbarActive) return; //return if the issnackbaractive is true
 
     setState(() {
-      _isSnackbarActive = true;
+      _isSnackbarActive = true; //setstate issnackbar active = true
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      SnackBar( //snackbar content + duration + action
         content: Text(message),
         duration: Duration(seconds: 6),
         action: SnackBarAction(
-          label: 'Dismiss',
+          label: 'Dismiss', //Dismiss label when user press it will exit the snackbar
           onPressed: () {
             //Dismiss SnackBar
           },
@@ -285,18 +284,18 @@ class _HomeState extends State<Home> {
         )
       ).closed.then((reason) {
     setState(() {
-      _isSnackbarActive = false;
+      _isSnackbarActive = false; //set state is snackbaractive is false
     });
   });
   }
 
-  void _runFilter(String enteredKeyword) {
-    List<ToDo> results = [];
-    if( enteredKeyword.isEmpty)
+  void _runFilter(String enteredKeyword) { //this will filter the word in the search bar to get the right to do item
+    List<ToDo> results = []; //if condition 
+    if( enteredKeyword.isEmpty) // if enter keyword is empty result will equal to do list
     {
-      results = todosList;
+      results = todosList; 
     }
-    else
+    else                        //else search a word that has a letter in todo item
     {
       results = todosList
       .where((item) => item.todoText!
@@ -309,119 +308,120 @@ class _HomeState extends State<Home> {
       _foundToDo = results;
     });
   }
-  Widget searchBox() {
+  Widget searchBox() { //create a widget for search box
     return Container(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
+              padding: EdgeInsets.symmetric(horizontal: 15), //create a edge move horizontally look like a search bar
+              decoration: BoxDecoration( //create color, 
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20)
+              borderRadius: BorderRadius.circular(20) //create a radius border for search bar make it not to shappy like a square
             ),
             child: TextField(
-              onChanged: (value) => _runFilter(value),
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(0),
-                prefixIcon: Icon(
+              onChanged: (value) => _runFilter(value), //insert a runfilter structure to filter the word for app bar
+              decoration: InputDecoration( //decorate for the searching text word 
+                contentPadding: EdgeInsets.all(0), // create a pixel for all size currently(0)
+                prefixIcon: Icon( //decor for the search bar + text in search bar
                   Icons.search,
                   color: Black, 
                   size:20,
-                  ),
+                  ), 
                   prefixIconConstraints: BoxConstraints(
                     maxHeight: 20, 
                     minWidth: 25, 
                     ),
                     border: InputBorder.none,
-                    hintText: 'Search',
+                    hintText: 'Search', //text for searching
                     hintStyle: TextStyle(color:Grey), 
               ),
             ),
             );
   }
 
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar() {  // Build app bar here
     return AppBar(
-      backgroundColor: Blue,
+      backgroundColor: Blue, //background color is blue
       
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, //make the children should place in the main axis in layout
         children: [
           Builder(
-        builder: (context) => IconButton(
+        builder: (context) => IconButton(   // create a 3 line icon for the app bar
         icon: Icon( null
           //Icons.favorite,
           //color: Red, 
         //size: 30,
         ),
-        onPressed: () => Scaffold.of(context).openDrawer(),
+        onPressed: () => Scaffold.of(context).openDrawer(), //this one make the user press the menu bar it will scroll down the drawer the have icon in there
         ),
           ),
-        Container(
+        Container( //This container is for the personal image
           height: 40,
           width: 40,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.asset('assets/images/123.jpg'), 
+            borderRadius: BorderRadius.circular(20),  // make a space between menu bar and the image
+            child: Image.asset('assets/images/123.jpg'),  //create myself image 
           ),
         ),
       ],
       )
     );
   }
-  Drawer _buildDrawer() {
+  Drawer _buildDrawer() { //build drawer here
     return Drawer(
       child: ListView(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.zero, //this one add 8 pizel around every side but currently (0)
         children: <Widget> [
           DrawerHeader(
             decoration: BoxDecoration(
-            color: Blue,
+            color: Blue,// Background color is blue + white below
           ),
           child: Text(
-            'Menu',
+            'Menu', // create a menu text for the drawer out side the background
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.white, // this one is background color, style, and size
               fontSize: 24,
             ),
           ),
       ),
+      //create a tile for info about here
       ListTile(
-        leading: Icon(Icons.info),
+        leading: Icon(Icons.info), //structure for info icon + 
         title: Text('About'),
         onTap: () {
-          Navigator.pop(context);
-          _showAboutDialog(context);
+          Navigator.pop(context); //this one navigate when click to about icon lead to the _showaboutdiaglog text below.
+          _showAboutDialog(context); //insert _showAboutDialog text.
         },
       ),
         ListTile(
-        leading: Icon(Icons.login),
+        leading: Icon(Icons.login), //this create a login icon
         title: Text('Log in'),
         onTap: () {
-          Navigator.pop(context);
-          _navigateToLogin(context);
+          Navigator.pop(context); // when click on it will navigate to login below
+          _navigateToLogin(context); // insert navigate to login
         },
         ),
         ListTile(
-          leading: Icon(Icons.star),
+          leading: Icon(Icons.star), //this create a favrorite('star') icon 
           title: Text('Favorites'),
           onTap: () {
-            Navigator.pop(context);
-            _navigateToFavorite(context);
+            Navigator.pop(context); //when user click on the favorite it will navigate to favorite below
+            _navigateToFavorite(context); // insert navigate to favorite
           }
         )
         ],
       ),
     );
   }
-  void _showAboutDialog(BuildContext context)
+  void _showAboutDialog(BuildContext context)  //this show a dialog of the about info
   {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('About'),
-          content: Text('This is To-Do list application. That make by Bill Binh',
+          content: Text('This is To-Do list application. That make by Bill Binh', //this is the text about the info
            ),
           actions: [
-            TextButton(
+            TextButton( // this is a button to close the dialog bar
               child: Text('Close'),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -432,15 +432,15 @@ class _HomeState extends State<Home> {
       },
     );
   }
-  void _navigateToLogin(BuildContext context)
+  void _navigateToLogin(BuildContext context) //this one navigate to login structure when user click on navigate login but didnt implement anything yet
   {
     //Implement this later
   }
-  void _navigateToFavorite(BuildContext context){
-    Navigator.push(
+  void _navigateToFavorite(BuildContext context){// this one navigate to favorite when user click on the star icon
+    Navigator.push( //this push the todoitem have a favorite turn on to the favorite bar
       context,
       MaterialPageRoute(
-        builder: (context) => FavoritesPage(todoList: todosList),
+        builder: (context) => FavoritesPage(todoList: todosList), //this is the favorite page library
         ),
     );
   }

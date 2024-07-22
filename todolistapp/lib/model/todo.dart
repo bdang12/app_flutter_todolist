@@ -1,4 +1,4 @@
-  class ToDo {
+  class ToDo { // This is a class for to do item which have a id, todoText, boolean isDone, boolean is Favorite and date begin and end
   String? id;
   String? todoText;
   bool isDone;
@@ -15,7 +15,7 @@
     this.isFavorite = false,
   });
 
-  static List<ToDo> todoList() {
+  static List<ToDo> todoList() { //This create a list of to do that have the variable call out above
     return [
       /*ToDo(id: '01', todoText: 'Moring Exe', isDone: true),
       ToDo(id: '02', todoText: 'Buy Cards', isDone: true),

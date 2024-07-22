@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:namer_app/constant/color.dart';
 import 'package:namer_app/model/todo.dart';
 
-class ToDoItems extends StatelessWidget
+class ToDoItems extends StatelessWidget //This is for to do item class
 {
   final ToDo todo;
   final Function(ToDo) onToDoChanged;
