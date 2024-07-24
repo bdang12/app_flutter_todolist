@@ -15,7 +15,7 @@
     this.isFavorite = false,
   });
 
-  static List<ToDo> todoList() { //This create a list of to do that have the variable call out above
+  /*static List<ToDo> todoList() { //This create a list of to do that have the variable call out above
     return [
       /*ToDo(id: '01', todoText: 'Moring Exe', isDone: true),
       ToDo(id: '02', todoText: 'Buy Cards', isDone: true),
@@ -24,5 +24,16 @@
       ToDo(id: '05', todoText: 'Play', ),
       ToDo(id: '06', todoText: 'Sleep', ),*/
     ];
+  }*/
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'todoText': todoText,
+      'isDone': isDone ? 1 : 0,
+      'isFavorite': isFavorite ? 1 : 0,
+      'createdDate': createdDate.toIso8601String(),
+      'deadlineDate': deadlineDate?.toIso8601String()
+    };
   }
 }

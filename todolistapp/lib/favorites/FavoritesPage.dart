@@ -22,10 +22,10 @@ class FavoritesPage extends StatelessWidget{
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          /*Text(
             'Begin: ${DateFormat('dd-MM-yyyy HH:mm').format(todo.createdDate)}',
             style: TextStyle(fontSize: 12, color: Colors.grey),
-          ),
+          ),*/
           if (todo.deadlineDate != null)
           Text(
             'Deadline: ${DateFormat('dd-MM-yyyy HH:mm').format(todo.deadlineDate!)}',
