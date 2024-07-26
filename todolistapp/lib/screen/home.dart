@@ -425,7 +425,9 @@ class _HomeState extends State<Home> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FavoritesPage(todoList: todosList),
+        builder: (context) => FavoritesPage(
+          todoList: todosList,
+          ),
       ),
     );
   }

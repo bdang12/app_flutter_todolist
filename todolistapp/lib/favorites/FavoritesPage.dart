@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:namer_app/Database/database_helper.dart';
 import 'package:namer_app/constant/color.dart';
 import 'package:namer_app/model/todo.dart';
+import 'package:namer_app/items/to_do_items.dart'; 
 
 class FavoritesPage extends StatelessWidget{
   final List<ToDo> todoList;
@@ -15,27 +17,41 @@ class FavoritesPage extends StatelessWidget{
         title: Text('Favorite ToDos'),
         backgroundColor: Blue,
       ),
-      body: ListView(
-        children: favoriteTodos.map((todo) {
-          return ListTile(
-            title: Text(todo.todoText!),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /*Text(
-            'Begin: ${DateFormat('dd-MM-yyyy HH:mm').format(todo.createdDate)}',
-            style: TextStyle(fontSize: 12, color: Colors.grey),
-          ),*/
-          if (todo.deadlineDate != null)
-          Text(
-            'Deadline: ${DateFormat('dd-MM-yyyy HH:mm').format(todo.deadlineDate!)}',
-            style: TextStyle(fontSize: 12, color: Colors.red),
-          ),
-        ],
+      backgroundColor: Colors.purple,
+      body: favoriteTodos.isNotEmpty
+      ? ListView.builder(
+        itemCount: favoriteTodos.length,
+        itemBuilder: (context, index) {
+          ToDo todo = favoriteTodos[index];
+          return ToDoItems(
+            todo: todo,
+            onToDoChanged: (updatedTodo) {
+              todo.isDone = !todo.isDone;
+              DatabaseHelper().updateTodo(todo);
+              (context as Element).markNeedsBuild();
+            },
+            onDeleteItem: (id) {
+              DatabaseHelper().deleteTodo(id);
+              favoriteTodos.removeAt(index);
+              (context as Element).markNeedsBuild();
+            },
+            onFavoriteChanged: (updatedTodo) {
+              todo.isFavorite = !todo.isFavorite;
+              DatabaseHelper().updateTodo(todo);
+              (context as Element).markNeedsBuild();
+            },
+            showDeleteIcon: false, 
+            );
+        },
+      )
+      : Center(
+        child: Text(
+          'No favorite ToDos yet.',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.grey),
+        ),
       ),
-    );
-  }).toList(),
-  ),
   );
 }
 }

@@ -9,8 +9,9 @@ class ToDoItems extends StatelessWidget //This is for to do item class
   final Function(ToDo) onToDoChanged;
   final Function(String) onDeleteItem;
   final Function(ToDo) onFavoriteChanged;
+  final bool showDeleteIcon; //Add a flag to not or show icon
 
-  const ToDoItems ({Key? key, required this.todo, required this.onToDoChanged, required this.onDeleteItem, required this.onFavoriteChanged}) : super(key: key);
+  const ToDoItems ({Key? key, required this.todo, required this.onToDoChanged, required this.onDeleteItem, required this.onFavoriteChanged, this.showDeleteIcon = true,}) : super(key: key);
 
   @override
   Widget build(BuildContext context)
@@ -65,6 +66,7 @@ class ToDoItems extends StatelessWidget //This is for to do item class
                 onFavoriteChanged(todo);
               },
             ), 
+            if(showDeleteIcon)//put condtion to show or not delete icon
          Container(
           padding: EdgeInsets.all(0),
           margin: EdgeInsets.symmetric(vertical: 12),
