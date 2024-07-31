@@ -4,10 +4,12 @@ import 'package:namer_app/items/to_do_items.dart';
 import 'package:namer_app/model/todo.dart';
 import 'package:namer_app/favorites/FavoritesPage.dart';
 import 'package:namer_app/Database/database_helper.dart';
+import 'package:namer_app/login/LoginPage.dart';
 import 'dart:async';
 
 class Home extends StatefulWidget {
-  Home({Key? key}) : super(key: key);
+  final int userId; 
+  Home({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -37,7 +39,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _loadTodos() async {
-    List<ToDo> todos = await DatabaseHelper().getTodos();
+    List<ToDo> todos = await DatabaseHelper().getTodos(widget.userId);
     setState(() {
       todosList = todos;
       _foundToDo = todosList;
@@ -224,6 +226,7 @@ class _HomeState extends State<Home> {
         isFavorite: false,
         createdDate: DateTime.now(),
         deadlineDate: deadline,
+        userId: widget.userId,
       );
       todosList.add(newTodo);
       DatabaseHelper().insertTodo(newTodo);
@@ -418,7 +421,12 @@ class _HomeState extends State<Home> {
   }
 
   void _navigateToLogin(BuildContext context) {
-    //Implement this later
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginPage(), 
+        )
+    );
   }
 
   void _navigateToFavorite(BuildContext context) {

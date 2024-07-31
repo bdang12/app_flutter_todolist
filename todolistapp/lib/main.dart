@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/login/LoginPage.dart';
 import 'package:namer_app/screen/home.dart';
 
 //This is project structure 
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
         title: 'Namer App',   //create a name for the app here
-        home: Home(),
+        home: LoginPage(),
     );
 }
 }

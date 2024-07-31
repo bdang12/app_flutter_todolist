@@ -5,6 +5,7 @@
   DateTime createdDate;
   DateTime? deadlineDate;
   bool isFavorite; //add a new bool for favorite
+  int userId;
 
   ToDo({
     required this.id,
@@ -13,6 +14,7 @@
     required this.createdDate,
     this.deadlineDate,
     this.isFavorite = false,
+    required this.userId,
   });
 
   /*static List<ToDo> todoList() { //This create a list of to do that have the variable call out above
@@ -33,7 +35,10 @@
       'isDone': isDone ? 1 : 0,
       'isFavorite': isFavorite ? 1 : 0,
       'createdDate': createdDate.toIso8601String(),
-      'deadlineDate': deadlineDate?.toIso8601String()
+      'deadlineDate': deadlineDate?.toIso8601String(),
+      'userId': userId, //include userid for todo.dart
     };
+
+    
   }
 }

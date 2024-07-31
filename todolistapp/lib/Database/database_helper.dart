@@ -26,10 +26,18 @@ class DatabaseHelper {
       dbpath,
       onCreate: _createDB,
       version: 1,
+      onConfigure: _onConfigure,
     );
   }
 
   Future _createDB(Database db, int version) async {
+    await db.execute('''
+    CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    email TEXT
+    )
+''');
 
     await db.execute('''
   CREATE TABLE todos (
@@ -38,14 +46,34 @@ class DatabaseHelper {
   isDone INTEGER,
   isFavorite INTEGER,
   createdDate TEXT,
-  deadlineDate TEXT
+  deadlineDate TEXT,
+  userId INTEGER,
+  FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
   )
     ''');
   }
+  
+  Future<void> _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+  }
+  Future<int> insertUser(String username, String email) async{
+    var dbClient = await database;
+    return await dbClient.insert('users', {'username': username, 'email': email});
+  }
 
+  Future<Map<String, dynamic>?> getUser(String username, String email) async {
+    var dbClient = await database;
+    List<Map<String, dynamic>> result = await dbClient.query('users', 
+    where: 'username = ? AND email = ?', whereArgs: [username, email]);
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
+  }
+
+  
   Future<void> insertTodo(ToDo todo) async {
     final db = await database;
-
     await db.insert(
       'todos',
       todo.toMap(),
@@ -53,9 +81,11 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<ToDo>> getTodos() async {
+    
+
+  Future<List<ToDo>> getTodos(int userId) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('todos');
+    final List<Map<String, dynamic>> maps = await db.query('todos', where: 'userId = ?', whereArgs: [userId]);
     return List.generate(maps.length, (i) {
       return ToDo(
         id: maps[i]['id'],
@@ -64,11 +94,14 @@ class DatabaseHelper {
         isFavorite: maps[i]['isFavorite'] == 1,
         createdDate: DateTime.parse(maps[i]['createdDate']),
         deadlineDate: maps[i]['deadlineDate'] != null ? DateTime.parse(maps[i]['deadlineDate']) : null,
+        userId:maps[i]['userId'],
       );
     }
     );
   }
+  
 
+ 
   Future<void> updateTodo(ToDo todo) async {
     final db = await database;
 
