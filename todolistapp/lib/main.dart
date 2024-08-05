@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/login/LoginPage.dart';
 import 'package:namer_app/screen/home.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 //This is project structure 
-void main() {   
+Future <void> main() async{   
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
